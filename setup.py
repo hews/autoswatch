@@ -5,7 +5,7 @@ setup(
     packages=["autoswatch"],
     include_package_data=True,
     install_requires=[
-        "flask",
+        "flask==0.12.2",
     ],
     setup_requires=[
     ],
