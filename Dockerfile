@@ -5,15 +5,15 @@ LABEL maintainer="Philip Hughes <p@hews.co>"
 RUN mkdir /app
 WORKDIR /app
 
-ADD ["autoswatch",       "/app/autoswatch"]
-ADD ["requirements.txt", "/app"]
-ADD ["setup.py",         "/app"]
-
-ENV FLASK_APP="autoswatch" \
-    FLASK_DEBUG="true"
+COPY ["autoswatch/",      "/app/autoswatch"]
+COPY ["tests/",           "/app/tests"]
+COPY ["docker/*",         "/app/"]
+COPY ["requirements.txt", \
+      "setup.py",         \
+      "setup.cfg",        "/app/"]
 
 RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD "./cmd.sh"

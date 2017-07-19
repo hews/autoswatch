@@ -5,7 +5,8 @@ Generate color swatch images on the fly.
 ## Getting Started
 
 ```bash
-docker-compose up # w/ --build the first time or whenever you change the image
+docker-compose build
+docker-compose up
 ```
 
 ## Running Tests
@@ -13,5 +14,6 @@ docker-compose up # w/ --build the first time or whenever you change the image
 Not Dockerized yet.
 
 ```bash
-python setup.py nosetests # or python3, if that makes sense…
+docker-compose build
+docker run -e ENV=test --rm hews/autoswatch:0.1.0
 ```
