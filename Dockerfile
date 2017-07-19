@@ -2,6 +2,8 @@ FROM python:3.6.1
 
 LABEL maintainer="Philip Hughes <p@hews.co>"
 
+RUN groupadd -r webapp && useradd -r -g webapp webapp
+
 RUN mkdir /app
 WORKDIR /app
 
@@ -15,5 +17,7 @@ COPY ["requirements.txt", \
 RUN pip install -r requirements.txt
 
 EXPOSE 5000
+
+USER webapp
 
 CMD "./cmd.sh"
