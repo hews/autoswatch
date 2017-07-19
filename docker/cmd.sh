@@ -17,17 +17,20 @@ if   [ "$ENV" = 'production' ]; then
   docker_print ""
   docker_print "Loading application in development environment…"
   docker_print "Starting dev server:"
+
   export ENV FLASK_APP="autoswatch" FLASK_DEBUG="true"
   exec flask run --host=0.0.0.0
 
 elif [ "$ENV" = 'test' ]; then
   docker_print "Loading application in test environment…"
   docker_print "Running tests:"
-  pip install -e .[tests] && nosetests
+
+  exec nosetests
 
 else
   docker_print "Loading application in development environment…"
   docker_print "Starting dev server:"
+
   export ENV FLASK_APP="autoswatch" FLASK_DEBUG="true"
   exec flask run --host=0.0.0.0
 
