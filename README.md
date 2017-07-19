@@ -13,5 +13,5 @@ docker-compose up # w/ --build the first time or whenever you change the image
 Not Dockerized yet.
 
 ```bash
-python -m unittest discover tests -v # or python3, if that makes sense…
+python setup.py nosetests # or python3, if that makes sense…
 ```
