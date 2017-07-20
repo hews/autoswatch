@@ -1,0 +1,20 @@
+html,
+body {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+main {
+  max-width: 800px;
+  padding: 20px;
+  margin: 20px auto 0;
+}
+
+.swatch {
+  border: 1px solid gray;
+  border-radius: 100%;
+}
+
+@media (max-width: 40.0rem) {
+  html { font-size:   50%; }
+}

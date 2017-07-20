@@ -24,7 +24,7 @@ docker run -e ENV=test --rm hews/autoswatch:0.1.0
 
 ## Steps Left
 
-1.  Add unit tests for the basic routes (root and /<hex_value>).
+1.  Add unit tests for the basic routes (root and `/<hex_value>`).
     - [ ] basic html layout (favicon, internal links),
     - [ ] differently structured hex values,
     - [ ] html color codes,
@@ -39,7 +39,7 @@ docker run -e ENV=test --rm hews/autoswatch:0.1.0
       **Digital Ocean droplet** (update production)
 6.  Use the pipeline for further TDD of features:
     1. [ ] Add redis for caching and e2e tests.
-    2. [ ] Add '/<mode>/<color_value>' route with tests.
+    2. [ ] Add `/&lt;mode&gt;/&lt;color_value&gt;` route with tests.
     3. [ ] Add JSON responses when requested via headers.
     4. [ ] Add URL query params for size, format, request=json
     5. [ ] Add URL query params for border.
