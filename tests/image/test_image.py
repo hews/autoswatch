@@ -1,8 +1,13 @@
-from nose.tools import assert_equals
 import autoswatch
 
+import io
+import json
 import hashlib
+import PIL.Image
+
 from collections import OrderedDict
+
+from nose.tools import assert_equals
 
 class TestImage:
 
@@ -62,7 +67,7 @@ class TestImage:
         # https://docs.python.org/3.6/library/collections.html#collections.OrderedDict
         assert_equals(list(i.to_odict().items()), list(d.items()))
 
-    def test_uid(self):
+    def test_guid(self):
         """
         Assert #uid returns a hashed representation of the instance.
         That representation comes from concatenation the keys of the
@@ -72,16 +77,55 @@ class TestImage:
         i = autoswatch.Image()
         s = '#ffffffPNGRGB20x20'
         u = hashlib.md5(s.encode('utf-8')).hexdigest()
-        assert_equals(i.uid(), u)
+        assert_equals(i.guid(), u)
 
-    # def test_json_serialization(self):
-    #     """
-    #     Assert #to_json returns a well structured JSON representation.
-    #     """
-    #     i = autoswatch.Image()
+    def test_json_serialization(self):
+        """
+        Assert #to_json returns a well structured JSON representation.
+        """
+        i = autoswatch.Image()
+        j = json.dumps({
+            'guid':   i.guid(),
+            'size':   '20x20',
+            'color':  '#ffffff',
+            'mode':   'RGB',
+            'format': 'PNG'
+        }, sort_keys=True)
+        assert_equals(i.to_json(), j)
 
-    # def test_bytes(self):
-    #     """
-    #     Assert #bytes returns the image as a bytes string.
-    #     """
-    #     i = autoswatch.Image()
+    def test_byte_stream(self):
+        """
+        Assert #byte_stream returns the image as a bytes IO buffer.
+        """
+        i = autoswatch.Image()
+        p = PIL.Image.new(
+            size=(20,20),
+            color='#ffffff',
+            mode='RGB'
+        )
+
+        with io.BytesIO() as byte_stream:
+           p.save(byte_stream, format='PNG')
+           assert_equals(
+               i.byte_stream().getvalue(),
+               byte_stream.getvalue()
+           )
+
+    def test_bytes(self):
+        """
+        Assert #bytes returns the image as a bytes string.
+        """
+        i = autoswatch.Image()
+        p = PIL.Image.new(
+            size=(20,20),
+            color='#ffffff',
+            mode='RGB'
+        )
+
+        with io.BytesIO() as byte_stream:
+           p.save(byte_stream, format='PNG')
+           assert_equals(
+               i.bytes(),
+               byte_stream.getvalue()
+           )
+

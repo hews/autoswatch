@@ -1,23 +1,37 @@
-from flask import Flask
+from flask import Flask, send_file
 
-from autoswatch.image import Image #, ImageGenerator
+import io
+
+from autoswatch.image import Image
 
 app = Flask(__name__)
 
 app.config.from_object(__name__)
 # app.config.from_envvar("AUTOSWATCH_SETTINGS", silent=True)
 
-@app.route("/")
+# app.config['SERVER_NAME'] = 'localhost'
+# with app.app_context():
+#     app.add_url_rule('/favicon.ico',
+#                  redirect_to=url_for('static', filename='favicon.ico'))
+# @app.route('/favicon.ico')
+# def favicon():
+#     return send_file('./static/favicon.ico')
+
+@app.route('/')
 def root():
     return ">> Swatch, AH-ahh!\n"
 
-@app.route("/<value>")
+@app.route('/<value>')
 def valueOnly(value):
-    return "The hex value is #%s\n" % (value)
-
-# TODO: generate simple pngs
+    buffer = Image(color='#' + value).byte_stream()
+    return send_file(buffer, mimetype='image/png')
 
 # TODO: generate when given a variety of types of hex value
+#   test:
+#   - with or without octothorpe (%23)
+#   - upper or lowercase
+#   - three-letter
+#   - html known colors
 
 # TODO: generate unique ids from canonicalized json representations of
 #   images that have been hashed.
@@ -26,20 +40,15 @@ def valueOnly(value):
 # TODO: cache the image according to a unique id
 #   From https://stackoverflow.com/a/15226368:
 #
-#   import PIL
 #   import redis
-#   import io
 #
-#   i = PIL.Image.new(…)
+#   i = Image.new(…)
 #   r = redis.StrictRedis(host='localhost')
-#
-#   with io.BytesIO() as byte_stream:
-#      i.save(byte_stream, format='…')
-#      r.set('imagedata', byte_stream.getvalue())
+#   r.set(i.guid(), i.bytes())
 #
 #   …
 #
-#   redis-cli --raw get 'imagedata' > test.png
+#   b = r.get(i.guid())
 
 # TODO: be able to return a json payload with a link to the image
 #   (and when the original request is made, we cache an image there)
