@@ -38,10 +38,10 @@ docker run -e ENV=test --rm hews/autoswatch:0.1.0
       **CircleCI** (run tests) →
       **Digital Ocean droplet** (update production)
 6.  Use the pipeline for further TDD of features:
-    a. [ ] Add redis for caching and e2e tests.
-    b. [ ] Add '/<mode>/<color_value>' route with tests.
-    c. [ ] Add JSON responses when requested via headers.
-    d. [ ] Add URL query params for size, format, request=json
-    e. [ ] Add URL query params for border.
-    f. [ ] Add URL query params for text.
-    g. [ ] Add URL query params for font and alignment.
+    1. [ ] Add redis for caching and e2e tests.
+    2. [ ] Add '/<mode>/<color_value>' route with tests.
+    3. [ ] Add JSON responses when requested via headers.
+    4. [ ] Add URL query params for size, format, request=json
+    5. [ ] Add URL query params for border.
+    6. [ ] Add URL query params for text.
+    7. [ ] Add URL query params for font and alignment.
