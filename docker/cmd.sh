@@ -27,6 +27,12 @@ elif [ "$ENV" = 'test' ]; then
 
   exec nosetests
 
+elif [ "$ENV" = 'test-guard' ]; then
+  docker_print "Loading application in test environment…"
+  docker_print "Running test guard:"
+
+  exec sniffer
+
 else
   docker_print "Loading application in development environment…"
   docker_print "Starting dev server:"

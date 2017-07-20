@@ -13,8 +13,10 @@ COPY ["docker/*",         \
       "setup.py",         \
       "setup.cfg",        "/app/"]
 
+# TODO: How best to handle this…?
 RUN pip install -e . && \
-    pip install -e .[tests] # TODO: How best to handle this…?
+    pip install -e .[tests] && \
+    pip install -e .[tests-guard]
 
 RUN chown -R flask /app
 USER flask

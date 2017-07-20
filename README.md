@@ -4,14 +4,18 @@ Generate color swatch images on the fly.
 
 ## Getting Started
 
+To begin a development environment, use:
+
 ```bash
 docker-compose build
-docker-compose up
+docker-compose -f docker-compose.development.yml up
 ```
 
-## Running Tests
+This runs the build as a dev server AND in a container with a test
+guard ([sniffer](https://pypi.python.org/pypi/sniffer)). The logging
+overlaps.
 
-Not Dockerized yet.
+## Running Tests Alone
 
 ```bash
 docker-compose build

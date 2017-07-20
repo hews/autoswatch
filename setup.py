@@ -12,6 +12,11 @@ tests_require = [
     'coverage>=4.4.1,<4.5.0'
 ]
 
+guard_requires = [
+    'pyinotify>=0.9.6,<0.10.0',
+    'sniffer>=0.4.0,<0.4.1'
+]
+
 setup(
     name='autoswatch',
     version=VERSION,
@@ -26,6 +31,7 @@ setup(
 
     install_requires=install_requires,
     extras_require={
-      'tests': tests_require
+      'tests':       tests_require,
+      'tests-guard': tests_require + guard_requires
     }
 )

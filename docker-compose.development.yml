@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+  server:
+    build: .
+    image: hews/autoswatch:0.1.0
+    environment:
+      - ENV=development
+    ports:
+      - 5000:5000
+    volumes:
+      - ./autoswatch:/app/autoswatch:ro
+  guard:
+    build: .
+    image: hews/autoswatch:0.1.0
+    environment:
+      - ENV=test-guard
+    volumes:
+      - ./autoswatch:/app/autoswatch:ro
+      - ./tests:/app/tests:ro

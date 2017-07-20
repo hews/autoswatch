@@ -5,9 +5,10 @@ services:
     build: .
     image: hews/autoswatch:0.1.0
     environment:
-      - ENV=development
+      - ENV=production
     ports:
       - 5000:5000
     volumes:
       - ./autoswatch:/app/autoswatch:ro
 
+# TODO: create a production-ready build and compose.
