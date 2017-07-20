@@ -11,11 +11,17 @@ app.config.from_envvar("CONFIG_FILE", silent=True)
 def root():
     return render_template('index.j2')
 
-@app.route('/<value>')
-def valueOnly(value):
-    buffer = Image(color='#' + value).byte_stream()
+@app.route('/<hex_value>')
+def value_only(hex_value):
+    buffer = Image(color='#' + hex_value).byte_stream()
     return send_file(buffer, mimetype='image/png')
 
+# TODO: redirects and errors.
+#
+# @app.route('/')
+# def index():
+#     return redirect(url_for('login'))
+#
 # @app.errorhandler(404)
 # def page_not_found(error):
 #     return render_template('page_not_found.html'), 404
@@ -46,7 +52,7 @@ def valueOnly(value):
 # TODO: also work for RGB(A), HSV and CMYK
 #
 #   @app.route("/<format>/<value>")
-#   def formatAndValue(format, value):
+#   def format_and_value(format, value):
 #       return "The %s value is #%s\n" % (format, value)
 
 # TODO: create a fun home page that explains the project (and update
