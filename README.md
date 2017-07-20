@@ -7,8 +7,8 @@ Generate color swatch images on the fly.
 To begin a development environment, use:
 
 ```bash
-docker-compose build
-docker-compose -f docker-compose.development.yml up
+docker-compose -f docker/development.yml build
+docker-compose -f docker/development.yml up
 ```
 
 This runs the build as a dev server AND in a container with a test
@@ -18,6 +18,6 @@ overlaps.
 ## Running Tests Alone
 
 ```bash
-docker-compose build
+docker-compose -f docker/development.yml build
 docker run -e ENV=test --rm hews/autoswatch:0.1.0
 ```

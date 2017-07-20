@@ -4,11 +4,12 @@ set -e
 RED="\033[0;31m"
 YLW="\033[1;33m"
 GRN="\033[0;32m"
+GRY="\033[0;37m"
 CYN="\033[0;36m"
 END="\033[0m"
 
 docker_print() {
-  echo -e "${CYN}[docker/cmd.sh]>${END} $@"
+  echo -e "${GRY}[docker/cmd.sh]>${END} $@"
 }
 
 if   [ "$ENV" = 'production' ]; then

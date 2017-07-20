@@ -1,6 +1,7 @@
 from nose.tools import assert_equals
 import autoswatch
 
+import hashlib
 from collections import OrderedDict
 
 class TestImage:
@@ -61,14 +62,17 @@ class TestImage:
         # https://docs.python.org/3.6/library/collections.html#collections.OrderedDict
         assert_equals(list(i.to_odict().items()), list(d.items()))
 
-    # def test_uid(self):
-    #     """
-    #     Assert #uid returns a hashed representation of the instance.
-    #     That representation comes from concatenation the keys of the
-    #     instance's #to_odict method, and then running through a hashing
-    #     algorithm.
-    #     """
-    #     uid = hash('#ffffffPNGRGB20x20')
+    def test_uid(self):
+        """
+        Assert #uid returns a hashed representation of the instance.
+        That representation comes from concatenation the keys of the
+        instance's #to_odict method, and then running through a hashing
+        algorithm.
+        """
+        i = autoswatch.Image()
+        s = '#ffffffPNGRGB20x20'
+        u = hashlib.md5(s.encode('utf-8')).hexdigest()
+        assert_equals(i.uid(), u)
 
     # def test_json_serialization(self):
     #     """
