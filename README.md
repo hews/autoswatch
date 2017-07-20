@@ -1,6 +1,6 @@
-# autoswat.ch
+# Autoswat.ch
 
-Generate color swatch images on the fly.
+> Generate color swatch images on the fly.
 
 ## Getting Started
 
@@ -21,3 +21,27 @@ overlaps.
 docker-compose -f docker/development.yml build
 docker run -e ENV=test --rm hews/autoswatch:0.1.0
 ```
+
+## Steps Left
+
+1.  Add unit tests for the basic routes (root and /<hex_value>).
+    - [ ] basic html layout (favicon, internal links),
+    - [ ] differently structured hex values,
+    - [ ] html color codes,
+    - [ ] useful error pages (400, 404).
+2.  [ ] Add programatic configuration and tests for app config.
+3.  [ ] Create a production build with Docker.
+4.  [ ] Deploy that build to Digital Ocean and test.
+5.  [ ] Create a deploy pipeline that runs:
+    - **GitHub** (push to master) → 
+      **Docker Hub** (build & store image) → 
+      **CircleCI** (run tests) →
+      **Digital Ocean droplet** (update production)
+6.  Use the pipeline for further TDD of features:
+    a. [ ] Add redis for caching and e2e tests.
+    b. [ ] Add '/<mode>/<color_value>' route with tests.
+    c. [ ] Add JSON responses when requested via headers.
+    d. [ ] Add URL query params for size, format, request=json
+    e. [ ] Add URL query params for border.
+    f. [ ] Add URL query params for text.
+    g. [ ] Add URL query params for font and alignment.
