@@ -25,7 +25,7 @@ COPY ["docker/*",    "/app/"]
 RUN chown -R flask /app
 USER flask
 
-EXPOSE 5000
+EXPOSE 5000 5001
 ENV TERM=xterm
 
 CMD "./cmd.sh"

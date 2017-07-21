@@ -29,14 +29,11 @@ def page_not_found(error):
 def bad_request(error):
     return render_template('400.j2'), 400
 
-# TODO: generate when given a variety of types of hex value
-#   test:
-#   - with or without octothorpe (%23)
-#   - upper or lowercase
-#   - three-letter
-#   - html known colors
-
-# TODO: cache the image according to a unique id
+# TODO: cache the image according to a unique id, and send with long-
+#   lived cache instructions.
+#
+#   Cache-Control: public, max-age=31536000
+#
 #   From https://stackoverflow.com/a/15226368:
 #
 #   import redis

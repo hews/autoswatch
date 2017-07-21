@@ -14,13 +14,25 @@ docker_print() {
 
 if   [ "$ENV" = 'production' ]; then
   docker_print "Loading application in production environment…"
-  docker_print "${YLW}WARNING: Not implemented yet.${END}"
-  docker_print ""
-  docker_print "Loading application in development environment…"
-  docker_print "Starting dev server:"
+  docker_print "${GRN}Starting production server:${END}"
 
-  export ENV FLASK_APP="autoswatch" FLASK_DEBUG="true"
-  exec flask run --host=0.0.0.0
+  # QUESTION: would --socket /tmp/autoswatch.sock make more sense if
+  #   we proxy behind an nginx container on DO?
+
+  # NOTES:
+  #   - wsgi-disable-file-wrapper solves an io error caused by sending
+  #     a bytes buffer to send_file.
+  #   - Do not understand manage-script-name or why to use it, but in
+  #     multiple example docs.
+  #   - Ports should be changed, and maybe aligned with development,
+  #     etc.
+  #   - What about: --master --processes 4 --threads 2 ?
+  #
+  exec uwsgi --http  0.0.0.0:5000     \
+             --stats 0.0.0.0:5001     \
+             --mount /=autoswatch:app \
+             --manage-script-name     \
+             --wsgi-disable-file-wrapper
 
 elif [ "$ENV" = 'test' ]; then
   docker_print "Loading application in test environment…"

@@ -4,7 +4,8 @@ VERSION = '0.1.0'
 
 install_requires = [
     'flask>=0.12.2,<0.13.0',
-    'pillow>=4.2.1,<4.3.0'
+    'pillow>=4.2.1,<4.3.0',
+    'uwsgi>=2.0.15'
 ]
 
 tests_require = [
