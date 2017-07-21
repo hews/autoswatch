@@ -6,6 +6,7 @@ services:
     image: hews/autoswatch:0.1.0
     environment:
       - ENV=development
+      - FLASK_APP=autoswatch:app
     ports:
       - 5000:5000
     volumes:

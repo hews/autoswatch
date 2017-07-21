@@ -12,7 +12,7 @@ docker_print() {
   echo -e "${GRY}[docker/cmd.sh]>${END} $@"
 }
 
-if   [ "$ENV" = 'production' ]; then
+if   [ "$ENV" = "production" ]; then
   docker_print "Loading application in production environment…"
   docker_print "${GRN}Starting production server:${END}"
 
@@ -34,13 +34,13 @@ if   [ "$ENV" = 'production' ]; then
              --manage-script-name     \
              --wsgi-disable-file-wrapper
 
-elif [ "$ENV" = 'test' ]; then
+elif [ "$ENV" = "test" ]; then
   docker_print "Loading application in test environment…"
   docker_print "Running tests:"
 
   exec nosetests
 
-elif [ "$ENV" = 'test-guard' ]; then
+elif [ "$ENV" = "test-guard" ]; then
   docker_print "Loading application in test environment…"
   docker_print "Running test guard:"
 
@@ -50,7 +50,6 @@ else
   docker_print "Loading application in development environment…"
   docker_print "Starting dev server:"
 
-  export ENV FLASK_APP="autoswatch" FLASK_DEBUG="true"
   exec flask run --host=0.0.0.0
 
 fi
