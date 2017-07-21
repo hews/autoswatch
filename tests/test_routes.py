@@ -1,5 +1,7 @@
 import autoswatch
 
+from autoswatch.utils import captured_templates
+
 from nose.tools import (
     assert_true,
     assert_in,
@@ -16,7 +18,8 @@ class TestRoutes:
 
     @classmethod
     def setup_class(self):
-        self.client = autoswatch.app.test_client()
+        self.app    = autoswatch.app
+        self.client = self.app.test_client()
 
     @classmethod
     def teardown_class(self): pass
@@ -34,18 +37,22 @@ class TestRoutes:
         Assert that the app renders custom error handlers
         for a 404 error.
         """
-        res = self.client.get('/path/does/not/exist')
-        assert_in('text/html', res.headers['Content-Type'])
-        assert_true(len(res.get_data()) > 0)
+        templates = []
+        with captured_templates(self.app, templates):
+            res = self.app.test_client().get('/path/does/not/exist')
+            template, context = templates[0]
+            assert_equals(template.name, '404.j2')
 
     def test_400_route(self):
         """
         Assert that the app renders custom error handlers
         for a 400 error.
         """
-        res = self.client.get('/hex/notahexval')
-        assert_in('text/html', res.headers['Content-Type'])
-        assert_true(len(res.get_data()) > 0)
+        templates = []
+        with captured_templates(self.app, templates):
+            res = self.app.test_client().get('/hex/notahexval')
+            template, context = templates[0]
+            assert_equals(template.name, '400.j2')
 
     def test_404_status(self):
         """

@@ -1,6 +1,7 @@
 import re
 
-from flask import render_template
+from flask import render_template, template_rendered
+from flask import template_rendered
 
 HEX_COLOR_REGEX = r'^#(?:[0-9a-f]{3}){1,2}$'
 
@@ -21,3 +22,9 @@ def register_error_handlers(app):
     @app.errorhandler(400)
     def bad_request(error):
         return render_template('400.j2'), 400
+
+# For testing, see: http://flask.pocoo.org/docs/0.12/signals/
+def captured_templates(app, recorded, **extra):
+    def record(sender, template, context):
+        recorded.append((template, context))
+    return template_rendered.connected_to(record, app)
