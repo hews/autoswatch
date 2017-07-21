@@ -1,7 +1,7 @@
 {% extends 'layout.j2' %}
 {% block body %}
   <main>
-    <h1>Welcome to Autoswat.ch!</h1>
+    <h1>Page Missing (404 Error)</h1>
     <p>
       <img class="swatch" src="{{ request.url_root }}hex/000" width="20" height="20">
       <img class="swatch" src="{{ request.url_root }}hex/f00" width="20" height="20">
@@ -13,16 +13,14 @@
       <img class="swatch" src="{{ request.url_root }}hex/fff" width="20" height="20">
     </p>
     <p>
-      Please navigate to a link that represents a hex value color
-      in order to generate a color swatch image on the fly.
-      For example, try visiting: <br>
+      You reached this page in error. Please navigate to a link that
+      represents a hex value color. For example, try visiting: <br>
       <strong>
         <a href="{{ request.url_root }}hex/ff0000">{{ request.url_root }}hex/ff0000</a>
       </strong>
+    </p>
     <p>
-    <p>
-      These are great for embedding into style guides, how-tos or
-      example pages that are written in HTML, Markdown, etc.
+      <em><a href="/">Return to the home page →</a></em>
     </p>
   </main>
 {% endblock %}

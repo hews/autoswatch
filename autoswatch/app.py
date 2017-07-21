@@ -1,8 +1,9 @@
-from flask import Flask, send_file, render_template
+from flask import Flask, send_file, render_template, abort
 
 from autoswatch.image import Image
+from autoswatch.utils import validate_hex_color
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 app.config.from_object(__name__)
 app.config.from_envvar("CONFIG_FILE", silent=True)
@@ -11,20 +12,22 @@ app.config.from_envvar("CONFIG_FILE", silent=True)
 def root():
     return render_template('index.j2')
 
-@app.route('/<hex_value>')
-def value_only(hex_value):
-    buffer = Image(color='#' + hex_value).byte_stream()
+@app.route('/hex/<hex_color>')
+def value_only(hex_color):
+    color = validate_hex_color(hex_color)
+    if not color['valid']:
+        return abort(400)
+
+    buffer = Image(color=color['value']).byte_stream()
     return send_file(buffer, mimetype='image/png')
 
-# TODO: redirects and errors.
-#
-# @app.route('/')
-# def index():
-#     return redirect(url_for('login'))
-#
-# @app.errorhandler(404)
-# def page_not_found(error):
-#     return render_template('page_not_found.html'), 404
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.j2'), 404
+
+@app.errorhandler(400)
+def bad_request(error):
+    return render_template('400.j2'), 400
 
 # TODO: generate when given a variety of types of hex value
 #   test:
