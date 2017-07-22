@@ -11,17 +11,14 @@ COPY ["setup.py",  \
       "setup.cfg", \
       "VERSION",   "/app/"]
 
-# TODO: How best to handle this…
-#  Right now, thinking Dockerfile & Dockerfile.test, but that may
-#  be too much maintenance and heavy lifting just to save from a few
-#  test libs being installed.
+# TODO: How best to handle this… Need to slim it down some?
 RUN pip install -e . && \
     pip install -e .[tests] && \
     pip install -e .[tests-guard]
 
+COPY ["docker/*",    "/app/"]
 COPY ["autoswatch/", "/app/autoswatch"]
 COPY ["tests/",      "/app/tests"]
-COPY ["docker/*",    "/app/"]
 
 RUN chown -R flask /app
 USER flask
@@ -29,4 +26,4 @@ USER flask
 EXPOSE 5000 5001
 ENV TERM=xterm
 
-CMD "./cmd.sh"
+CMD ["./cmd.sh"]
