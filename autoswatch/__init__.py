@@ -7,9 +7,10 @@ from autoswatch.image  import Image
 
 import autoswatch.utils as utils
 
-def env_config(env):
+def env_config(env=''):
     if 'test' in env:
         return {
+            'DEBUG': False, # Should this be so?
             'TESTING': True
         }
     elif env == 'production':
