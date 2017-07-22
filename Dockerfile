@@ -8,7 +8,8 @@ RUN mkdir -p /app/autoswatch
 WORKDIR /app
 
 COPY ["setup.py",  \
-      "setup.cfg", "/app/"]
+      "setup.cfg", \
+      "VERSION",   "/app/"]
 
 # TODO: How best to handle this…
 #  Right now, thinking Dockerfile & Dockerfile.test, but that may

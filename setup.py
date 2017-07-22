@@ -1,6 +1,7 @@
 from setuptools import setup
 
-VERSION = '0.1.0'
+with open('./VERSION') as version_fp:
+    VERSION = version_fp.read().strip()
 
 install_requires = [
     'flask>=0.12.2,<0.13.0',

@@ -1,30 +1,64 @@
 # Autoswat.ch
 
-> Generate color swatch images on the fly.
+#### ***Generate color swatch images on the fly!***
+
+### Versioning
+
+The current codebase version is stored in `VERSION`, and matches the
+Docker image tag we want to use along with the code. It can be entered 
+on every command below individually, or we can export it into the
+environment:
+
+```bash
+export BUILD_VERSION=$(cat VERSION | xargs echo -n)
+```
+
+> **Note:** the name of this env var is important, as it's hardcoded
+> into the Docker Compose files!
+
+### Building an Image
+
+This package relies on Docker to contain and manage the Python
+environment. To use it, we need a working image locally. Either pull
+the image from Docker Hub or build it.
+
+Pull from Docker Hub:
+
+```bash
+docker pull "hews/autoswatch:$BUILD_VERSION"
+```
+
+Build locally:
+
+```bash
+docker build -t "hews/autoswatch:$BUILD_VERSION" .
+```
 
 ### Getting Started
 
 To begin a development environment, use:
 
 ```bash
-docker-compose -f docker/development.yml build
-docker-compose -f docker/development.yml up
+# Necessary to export $BUILD_VERSION first!
+docker-compose -f docker/compose.development.yml up
 ```
 
-This runs the build as a dev server AND in a container with a test
-guard ([sniffer](https://pypi.python.org/pypi/sniffer)). The logging
-overlaps.
+This runs the build in two separate containers: one is a dev server,
+and the other runs a test guard ([sniffer][sniffer]). Both mount the
+app files, and their logging overlaps.
 
-### Running Tests (CI)
+### Running Unit Tests (as in CI)
 
 ```bash
-docker-compose -f docker/development.yml build
-docker run -e ENV=test --rm hews/autoswatch:0.1.0
+docker run -e ENV=test --rm "hews/autoswatch:$BUILD_VERSION"
 ```
 
-### Running Production
+### Running a Production Server
 
-TBD.
+```bash
+# Necessary to export $BUILD_VERSION first!
+docker-compose -f docker/compose.production.yml up
+```
 
 ---
 
@@ -34,10 +68,10 @@ TBD.
     - [x] basic html layout (favicon, internal links),
     - [x] differently structured hex values,
     - [x] useful error pages (400, 404).
-2.  [ ] Add programatic configuration and tests for app config.
-    - Includes creating a canonical version that is updated everywhere,
+2.  [x] Add programatic configuration and tests for app config.
+    - [x] Create a canonical version that is updated everywhere,
       including in the Docker image, and maybe that can bust caches?
-3.  [ ] Create a production build with Docker.
+3.  [x] Create a production build with Docker.
 4.  [ ] Deploy that build to Digital Ocean and test.
 5.  [ ] Create a deploy pipeline that runs:
     - **GitHub** (_push to master_) → <br>
@@ -55,3 +89,7 @@ TBD.
     6. [ ] Add URL query params for border.
     7. [ ] Add URL query params for text.
     8. [ ] Add URL query params for font and alignment.
+
+<!-- LINKS -->
+
+[sniffer]: https://pypi.python.org/pypi/sniffer

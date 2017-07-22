@@ -3,11 +3,9 @@ version: '3.1'
 services:
   autoswatch:
     build: ../
-    image: hews/autoswatch:0.1.0
+    image: "hews/autoswatch:${BUILD_VERSION}"
     environment:
       - ENV=production
     ports:
       - 5000:5000
       - 5001:5001
-
-# TODO: create a production-ready build and compose.
