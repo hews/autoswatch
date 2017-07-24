@@ -1,11 +1,22 @@
 version: '3.1'
 
 services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:0.6.0
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
   autoswatch:
     build: ../
     image: "hews/autoswatch:${BUILD_VERSION}"
+    container_name: autoswatch
     environment:
       - ENV=production
+      - "VIRTUAL_HOST=${VIRTUAL_HOST}"
+      - VIRTUAL_PORT=5000
+      - VIRTUAL_PROTO=uwsgi
     ports:
       - 5000:5000
       - 5001:5001

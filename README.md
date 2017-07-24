@@ -130,11 +130,13 @@ $ eval $(docke-machine env -u)
 
 **TODO:**
 
+Add an Nginx container with Docker Compose, link the two, and set
+restart policies.
+
 1. Add non-root user to run the container under.
 2. ufw configured and on?
 3. Add SSL cert to machine via Let's Encrypt.
 4. Return IP from original command.
-
 
 ---
 

@@ -16,22 +16,22 @@ if   [ "$ENV" = "production" ]; then
   docker_print "Loading application in production environment…"
   docker_print "${GRN}Starting production server:${END}"
 
-  # QUESTION: would --socket /tmp/autoswatch.sock make more sense if
-  #   we proxy behind an nginx container on DO?
-
   # NOTES:
   #   - wsgi-disable-file-wrapper solves an io error caused by sending
   #     a bytes buffer to send_file.
+
+  # QUESTIONS:
   #   - Do not understand manage-script-name or why to use it, but in
   #     multiple example docs.
   #   - Ports should be changed, and maybe aligned with development,
-  #     etc.
+  #     etc?
   #   - What about: --master --processes 4 --threads 2 ?
+  #   - Can we proxy to a Unix socket instead of TCP?
   #
-  exec uwsgi --http  0.0.0.0:5000     \
-             --stats 0.0.0.0:5001     \
-             --mount /=autoswatch:app \
-             --manage-script-name     \
+  exec uwsgi --uwsgi-socket  :5000     \
+             --stats  0.0.0.0:5001     \
+             --mount  /=autoswatch:app \
+             --manage-script-name      \
              --wsgi-disable-file-wrapper
 
 elif [ "$ENV" = "test" ]; then
