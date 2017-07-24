@@ -66,10 +66,11 @@ app files, and their logging overlaps.
 docker run -e ENV=test --rm "hews/autoswatch:$BUILD_VERSION"
 ```
 
-### Running a Production Server
+### Running a Production Server Locally
 
 ```bash
-# Necessary to export $BUILD_VERSION first!
+# Necessary to export $BUILD_VERSION & VIRTUAL_HOST first!
+VIRTUAL_HOST=localhost
 docker-compose -f docker/compose.production.yml up
 ```
 
@@ -92,7 +93,9 @@ For all the commands below, remember TIMTOWTDI. Check out the docs for
 
 ```bash
 # This can all be done so many ways. Just `env | grep …` first to make 
-# sure they're all there.
+# sure they're all there, or add them to a `.env` file first, which is
+# loaded by Docker (though env vars in .env are overriden by values
+# from the environment).
 $ BUILD_VERSION=$(cat VERSION | xargs echo -n)
 $ DIGITALOCEAN_ACCESS_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 $ DIGITALOCEAN_SSH_KEY_FINGERPRINT=XX:XX:XX:XX:XX:XX:XX:XX
@@ -120,7 +123,14 @@ $ doctl compute floating-ip-action assign "${FLOATING_IP}" "${DROPLET_IP}"
 $ eval $(docker-machine env "${DROPLET_NAME}")
 
 # "… transform and roll out!"
-$ docker-compose -f docker/compose.production.yml up
+$ VIRTUAL_HOST=autoswat.ch # … or whatever host/IP (or localhost) you are using.
+$ docker-compose -f docker/compose.production.yml up -d
+$ …
+
+# Check in from time-to-time.
+$ docker logs nginx-proxy
+$ …
+$ docker logs autoswatch
 $ …
 
 # That's it! Visit the site! And finally, reset the environment so that 
@@ -128,39 +138,75 @@ $ …
 $ eval $(docke-machine env -u)
 ```
 
-**TODO:**
-
-Add an Nginx container with Docker Compose, link the two, and set
-restart policies.
-
-1. Add non-root user to run the container under.
-2. ufw configured and on?
-3. Add SSL cert to machine via Let's Encrypt.
-4. Return IP from original command.
-
 ---
 
 ## Steps Left
 
-1.  [x] Deploy build to Digital Ocean and test. 
-2.  [ ] Use a container to reverse proxy from nginx with an up-to-date 
-    compose file.
-3.  [ ] Create a deploy pipeline that runs:
-    - **GitHub** (_push to master_) → <br>
-      **Docker Hub** (_build & store image_) → <br>
-      **CircleCI** (_run tests_) → <br>
-      **Digital Ocean droplet** (_update production_)
-4.  Use the pipeline for further TDD of features:
-    1. [ ] Add redis (for caching) and e2e tests. This includes adding
-       very long caching data to the requests.
-    2. [ ] Add `/<named_color>` route for named colors.
-    3. [ ] Add `/(color)|rgb|rgba|cmyk|hsl/<color_value>` routes with 
-       tests.
-    4. [ ] Add JSON responses when requested via headers.
-    5. [ ] Add URL query params for size, format, request=json
-    6. [ ] Add URL query params for border.
-    7. [ ] Add URL query params for text.
-    8. [ ] Add URL query params for font and alignment.
+0.  Harden and complete the production app creation/deploy:
+    - [ ] Set restart policies on the containers.
+    - [ ] Allow scaling of autoswatch container (dynamic port binding).
+    - [ ] Add non-root user to ssh in with?
+    - [x] Ensure ufw configured and on? (Seems like it, but should test again.)
+    - [ ] Add SSL cert to machine via Let's Encrypt.
+    - [ ] Return IP from original command?
+1.  Create a deploy pipeline that runs:
+    - [ ] **GitHub** (_push to master_) → <br>
+          **Docker Hub** (_build & store image_) → <br>
+          **CircleCI** (_run tests_) → <br>
+          **Digital Ocean droplet** (_update production_)
+2.  Use the pipeline for further TDD of features:
+    - [ ] Add redis (for caching) and e2e tests. This includes adding
+          very long caching data to the requests.
+    - [ ] Add `/<named_color>` route for named colors.
+    - [ ] Add `/(color)|rgb|rgba|cmyk|hsl/<color_value>` routes with 
+          tests.
+    - [ ] Add JSON responses when requested via headers.
+    - [ ] Add URL query params for size, format, request=json
+    - [ ] Add URL query params for border.
+    - [ ] Add URL query params for text.
+    - [ ] Add URL query params for font and alignment.
+
+<!--
+
+docker-machine create \
+  --driver=generic \
+  --generic-ip-address=192.241.220.112 \
+  --generic-ssh-key="~/.ssh/id_rsa" \
+  autoswatch-docker-sfo1-01
+
+|-----------------------|---------------------|------|
+| --generic-engine-port | GENERIC_ENGINE_PORT | 2376 |
+| --generic-ip-address  | GENERIC_IP_ADDRESS  | -    |
+| --generic-ssh-key     | GENERIC_SSH_KEY     | -    |
+| --generic-ssh-user    | GENERIC_SSH_USER    | root |
+| --generic-ssh-port    | GENERIC_SSH_PORT    | 22   |
+
+docker-machine create \
+  --driver digitalocean \
+  --digitalocean-access-token="${DO_API_KEY}" \
+  --digitalocean-region=sfo1 \
+  --digitalocean-ssh-key-fingerprint="${DO_SSH_FINGERPRINT}" \
+  autoswatch-docker-sfo1-02
+
+eval "$(docker-machine env autoswatch-docker-sfo1-02)"
+
+|-------------------------------------|----------------------------------|------------------|
+| --digitalocean-access-token         | DIGITALOCEAN_ACCESS_TOKEN        | -                |
+| --digitalocean-image                | DIGITALOCEAN_IMAGE               | ubuntu-16-04-x64 |
+| --digitalocean-region               | DIGITALOCEAN_REGION              | nyc3             |
+| --digitalocean-size                 | DIGITALOCEAN_SIZE                | 512mb            |
+| --digitalocean-ipv6                 | DIGITALOCEAN_IPV6                | false            |
+| --digitalocean-private-networking   | DIGITALOCEAN_PRIVATE_NETWORKING  | false            |
+| --digitalocean-backups              | DIGITALOCEAN_BACKUPS             | false            |
+| --digitalocean-userdata             | DIGITALOCEAN_USERDATA            | -                |
+| --digitalocean-ssh-user             | DIGITALOCEAN_SSH_USER            | root             |
+| --digitalocean-ssh-port             | DIGITALOCEAN_SSH_PORT            | 22               |
+| --digitalocean-ssh-key-fingerprint  | DIGITALOCEAN_SSH_KEY_FINGERPRINT | -                |
+
+
+eval "$(docker-machine env -u)"
+
+-->
 
 <!-- LINKS -->
 

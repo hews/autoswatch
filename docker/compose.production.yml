@@ -4,6 +4,7 @@ services:
   nginx-proxy:
     image: jwilder/nginx-proxy:0.6.0
     container_name: nginx-proxy
+    restart: always
     ports:
       - 80:80
     volumes:
@@ -12,6 +13,7 @@ services:
     build: ../
     image: "hews/autoswatch:${BUILD_VERSION}"
     container_name: autoswatch
+    restart: always
     environment:
       - ENV=production
       - "VIRTUAL_HOST=${VIRTUAL_HOST}"
