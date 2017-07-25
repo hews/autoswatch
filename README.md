@@ -78,7 +78,9 @@ VIRTUAL_HOST=localhost
 docker-compose -f docker/compose.production.yml up
 ```
 
-## Creating a Host in a Cloud Service (DigitalOcean)
+## Acquire a Server
+
+### Creating a Virtual Server in the Cloud with DigitalOcean
 
 For this example we will use DigitalOcean. The steps below will create
 a working [droplet][droplet] that is provisioned for Docker by using
@@ -133,7 +135,9 @@ $ …
 # Let's deploy to it! 
 ```
 
-## Using Docker Machine and Docker Compose (v3) to Deploy the App
+## Deploy
+
+### Using Docker Machine and Docker Compose (v3)
 
 **TODO:** expand upon:
 
@@ -141,37 +145,31 @@ $ …
 - [`jrcs/docker-letsencrypt-nginx-proxy-companion`][le-repo]
 - [`jwilder/docker-gen`][dg-repo]
 - [compose v3](https://docs.docker.com/compose/compose-file/)
-- *swarm mode and app replicas…*
-  
-  From jwilder's description of his automated Nginx reverse-proxy container:
-
-  > While this works well for containers running on a single host, 
-  > generating configs for remote hosts requires [service discovery][jw1]. 
-  > Take a look at [docker service discovery][jw2] for a solution to that 
-  > problem.
+- *swarm mode and app replicas…*   
+   From jwilder's description of his automated Nginx reverse-proxy container:
+ 
+   > While this works well for containers running on a single host, 
+   > generating configs for remote hosts requires [service discovery][jw1]. 
+   > Take a look at [docker service discovery][jw2] for a solution to that 
+   > problem.
 
 ```bash
 # First, we need to set some more env vars that tell the Docker CLI 
 # client to send it's commands to the new droplet instead of localhost.
 $ eval $(docker-machine env "${DROPLET_NAME}")
 
-# "… transform and roll out!"
+# "Autobots, transform and roll out!"
 $ VIRTUAL_HOST=autoswat.ch         # … or whatever host/IP (or localhost) you are using.
 $ LETSENCRYPT_EMAIL=XXXXX@XXXXX.ly # … or whatever email you want to use.
-$ LETSENCRYPT_DEBUG="true"         $ … to enable debug logging in the Let's Encrypt container.
-$
+$ LETSENCRYPT_DEBUG="true"         # … to enable debug logging in the Let's Encrypt container.
 $ docker-compose -f docker/compose.production.yml up -d
-$ …
 
-# Check in from time-to-time.
+# Check in from time-to-time:
 $ docker logs nginx_proxy
-$ …
 $ docker logs autoswatch
-$ …
 $ docker logs letsencrypt
-$ …
 
-# That's it! Visit the site! And finally, reset the environment so that 
+# That's it! Visit the site! And finally, reset the environment so that
 # Docker commands are sent to localhost only:
 $ eval $(docke-machine env -u)
 ```
