@@ -1,14 +1,18 @@
 # Autoswat.ch
 
-#### ***Generate color swatch images on the fly!***
+![](http://autoswat.ch/hex/ff0033)
+![](http://autoswat.ch/hex/ff9955)
+![](http://autoswat.ch/hex/ffffe0)
+![](http://autoswat.ch/hex/90ee90)
+![](http://autoswat.ch/hex/add8e6)
+![](http://autoswat.ch/hex/cc99cc)
+![](http://autoswat.ch/hex/ee82ee)
+![](http://autoswat.ch/hex/ffc0cb)
+![](http://autoswat.ch/hex/d2b48c)
+![](http://autoswat.ch/hex/fffff0)
+![](http://autoswat.ch/hex/c0c0c0)
 
-![](http://autoswat.ch:5000/hex/fff)
-![](http://autoswat.ch:5000/hex/ff0)
-![](http://autoswat.ch:5000/hex/f00)
-![](http://autoswat.ch:5000/hex/f0f)
-![](http://autoswat.ch:5000/hex/00f)
-![](http://autoswat.ch:5000/hex/0ff)
-![](http://autoswat.ch:5000/hex/000)
+#### ***Generate color swatch images on the fly!***
 
 ![](https://images.microbadger.com/badges/image/hews/autoswatch:0.1.0.svg)
 ![](https://images.microbadger.com/badges/version/hews/autoswatch:0.1.0.svg)
@@ -74,11 +78,16 @@ VIRTUAL_HOST=localhost
 docker-compose -f docker/compose.production.yml up
 ```
 
-## Deploying
+## Creating a Host in a Cloud Service (DigitalOcean)
 
-Using an example deploy for Digital Ocean, the steps below will create
-a working [droplet][droplet] that is running the app by using Docker
-Machine to 
+For this example we will use DigitalOcean. The steps below will create
+a working [droplet][droplet] that is provisioned for Docker by using
+Docker Machine. 
+
+> Note: You could also create a provisioned droplet using the DigitalOcean
+> console, and then simply send Docker commands by using Docker Machine
+> with the [`generic` driver][g-driver], or deploy the code with
+> GitHub, SSH in and run the commands local to the droplet.
 
 Before beginning you should have:
 
@@ -117,20 +126,49 @@ $ FLOATING_IP=XXX.XXX.XXX.XXX
 $ doctl compute floating-ip-action assign "${FLOATING_IP}" "${DROPLET_IP}"
 
 # Now you should be able to see the new droplet in your DigitalOcean
-# console. Let's deploy to it! First, we need to set some more env vars
-# that tell Docker to send it's commands to the new droplet instead of
-# localhost.
+# console and SSH into it, like:
+$ ssh "root@${DROPLET_IP}"
+$ …
+
+# Let's deploy to it! 
+```
+
+## Using Docker Machine and Docker Compose (v3) to Deploy the App
+
+**TODO:** expand upon:
+
+- [`jwilders/nginx-proxy`][np-repo]
+- [`jrcs/docker-letsencrypt-nginx-proxy-companion`][le-repo]
+- [`jwilder/docker-gen`][dg-repo]
+- [compose v3](https://docs.docker.com/compose/compose-file/)
+- *swarm mode and app replicas…*
+  
+  From jwilder's description of his automated Nginx reverse-proxy container:
+
+  > While this works well for containers running on a single host, 
+  > generating configs for remote hosts requires [service discovery][jw1]. 
+  > Take a look at [docker service discovery][jw2] for a solution to that 
+  > problem.
+
+```bash
+# First, we need to set some more env vars that tell the Docker CLI 
+# client to send it's commands to the new droplet instead of localhost.
 $ eval $(docker-machine env "${DROPLET_NAME}")
 
 # "… transform and roll out!"
-$ VIRTUAL_HOST=autoswat.ch # … or whatever host/IP (or localhost) you are using.
+$ VIRTUAL_HOST=autoswat.ch         # … or whatever host/IP (or localhost) you are using.
+$ LETSENCRYPT_EMAIL=XXXXX@XXXXX.ly # … or whatever email you want to use.
+$ LETSENCRYPT_DEBUG="true"         $ … to enable debug logging in the Let's Encrypt container.
+$
 $ docker-compose -f docker/compose.production.yml up -d
 $ …
 
 # Check in from time-to-time.
-$ docker logs nginx-proxy
+$ docker logs nginx_proxy
 $ …
 $ docker logs autoswatch
+$ …
+$ docker logs letsencrypt
 $ …
 
 # That's it! Visit the site! And finally, reset the environment so that 
@@ -143,12 +181,15 @@ $ eval $(docke-machine env -u)
 ## Steps Left
 
 0.  Harden and complete the production app creation/deploy:
-    - [ ] Set restart policies on the containers.
-    - [ ] Allow scaling of autoswatch container (dynamic port binding).
-    - [ ] Add non-root user to ssh in with?
-    - [x] Ensure ufw configured and on? (Seems like it, but should test again.)
-    - [ ] Add SSL cert to machine via Let's Encrypt.
-    - [ ] Return IP from original command?
+    - [ ] Check, can I remove `vhost` and `nginx_html` volumes from 
+          `letsencrypt` service?
+    - [ ] Add non-root user to SSH in with (and other provisioning).
+    - [x] Add SSL cert to machine via Let's Encrypt.
+    - [x] Set restart policies on the containers.
+    - ~~[ ] Ensure ufw configured and on?~~ (Seems like it, but should test again.)
+    - ~~[ ] Allow scaling of the `autoswatch` container (dynamic port 
+          binding), all proxied by the same `nginx-proxy` container.~~
+          (Not dealing with swarm mode for now.)
 1.  Create a deploy pipeline that runs:
     - [ ] **GitHub** (_push to master_) → <br>
           **Docker Hub** (_build & store image_) → <br>
@@ -165,6 +206,23 @@ $ eval $(docke-machine env -u)
     - [ ] Add URL query params for border.
     - [ ] Add URL query params for text.
     - [ ] Add URL query params for font and alignment.
+
+<!-- LINKS -->
+
+[sniffer]:   https://pypi.python.org/pypi/sniffer
+[droplet]:   https://www.digitalocean.com/products/compute/
+[doctl]:     https://github.com/digitalocean/doctl
+[machine]:   https://docs.docker.com/machine/reference/
+[do-driver]: https://docs.docker.com/machine/drivers/digital-ocean/
+[g-driver]:  https://docs.docker.com/machine/drivers/generic/
+[le-repo]:   https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion
+[np-repo]:   https://github.com/jwilder/nginx-proxy
+[dg-repo]:   https://github.com/jwilder/docker-gen
+[jw1]:       http://jasonwilder.com/blog/2014/02/04/service-discovery-in-the-cloud/
+[jw2]:       http://jasonwilder.com/blog/2014/07/15/docker-service-discovery
+
+
+
 
 <!--
 
@@ -206,12 +264,49 @@ eval "$(docker-machine env autoswatch-docker-sfo1-02)"
 
 eval "$(docker-machine env -u)"
 
+Starting nginx_proxy ... 
+Starting nginx_proxy ... done
+Creating letsencrypt ... 
+Creating letsencrypt ... done
+Attaching to autoswatch, nginx_proxy, letsencrypt
+nginx_proxy    | forego     | starting dockergen.1 on port 5000
+nginx_proxy    | forego     | starting nginx.1 on port 5100
+nginx_proxy    | dockergen.1 | 2017/07/25 20:08:48 Generated '/etc/nginx/conf.d/default.conf' from 2 containers
+nginx_proxy    | (&c, more of this stuff…)
+nginx_proxy    | dockergen.1 | 2017/07/25 20:08:49 Received event start for container 38db2f9fdc3d
+letsencrypt    | Creating Diffie-Hellman group (can take several minutes...)
+letsencrypt    | Generating DH parameters, 2048 bit long safe prime, generator 2
+letsencrypt    | This is going to take a long time
+autoswatch     | [docker/cmd.sh]> Loading application in production environment…
+autoswatch     | [docker/cmd.sh]> Starting production server:
+autoswatch     | *** Starting uWSGI 2.0.15 (64bit) on [Tue Jul 25 20:08:33 2017] ***
+autoswatch     | (&c, lots more of this stuff…)
+(wait a long time)
+letsencrypt    | ...........+.........................+*... (&c for a few hundred lines…)
+letsencrypt    | Sleep for 3600s
+letsencrypt    | 2017/07/25 20:11:59 Generated '/app/letsencrypt_service_data' from 2 containers
+letsencrypt    | 2017/07/25 20:11:59 Running '/app/update_certs'
+letsencrypt    | 2017/07/25 20:11:59 Watching docker events
+letsencrypt    | Reloading nginx proxy...
+letsencrypt    | 2017/07/25 20:11:59 Contents of /app/letsencrypt_service_data did not change. Skipping notification '/app/update_certs'
+letsencrypt    | 2017/07/25 20:11:59 Generated '/etc/nginx/conf.d/default.conf' from 2 containers
+letsencrypt    | 2017/07/25 20:11:59 [notice] 32#32: signal process started
+letsencrypt    | Creating/renewal autoswat.ch certificates... (autoswat.ch)
+letsencrypt    | 2017-07-25 20:11:59,898:INFO:simp_le:1211: Generating new account key
+letsencrypt    | 2017-07-25 20:12:01,770:INFO:requests.packages.urllib3.connectionpool:756: Starting new HTTPS connection (1): acme-v01.api.letsencrypt.org
+letsencrypt    | 2017-07-25 20:12:02,884:INFO:requests.packages.urllib3.connectionpool:756: Starting new HTTPS connection (1): letsencrypt.org
+nginx_proxy    | dockergen.1 | 2017/07/25 20:08:49 Contents of /etc/nginx/conf.d/default.conf did not change. Skipping notification 'nginx -s reload'
+letsencrypt    | 2017-07-25 20:12:04,412:INFO:requests.packages.urllib3.connectionpool:207: Starting new HTTP connection (1): autoswat.ch
+letsencrypt    | 2017-07-25 20:12:04,500:INFO:simp_le:1305: autoswat.ch was successfully self-verified
+nginx_proxy    | nginx.1    | autoswat.ch 10.12.0.2 - - [25/Jul/2017:20:12:04 +0000] "GET /.well-known/acme-challenge/hxsrqcghk3hrgb7KnMIZgNKg_T3-mUwmDnd2cJybNa4 HTTP/1.1" 200 87 "-" "python-requests/2.8.1"
+letsencrypt    | 2017-07-25 20:12:04,710:INFO:simp_le:1313: Generating new certificate private key
+letsencrypt    | 2017-07-25 20:12:07,575:INFO:simp_le:391: Saving account_key.json
+letsencrypt    | 2017-07-25 20:12:07,576:INFO:simp_le:391: Saving key.pem
+letsencrypt    | 2017-07-25 20:12:07,576:INFO:simp_le:391: Saving chain.pem
+letsencrypt    | 2017-07-25 20:12:07,577:INFO:simp_le:391: Saving fullchain.pem
+letsencrypt    | 2017-07-25 20:12:07,578:INFO:simp_le:391: Saving cert.pem
+letsencrypt    | Reloading nginx proxy...
+letsencrypt    | 2017/07/25 20:12:07 Generated '/etc/nginx/conf.d/default.conf' from 2 containers
+letsencrypt    | 2017/07/25 20:12:07 [notice] 42#42: signal process started
+nginx_proxy    | nginx.1    | autoswat.ch 66.133.109.36 - - [25/Jul/2017:20:12:04 +0000] "GET /.well-known/acme-challenge/hxsrqcghk3hrgb7KnMIZgNKg_T3-mUwmDnd2cJybNa4 HTTP/1.1" 200 87 "-" "Mozilla/5.0 (compatible; Let's Encrypt validation server; +https://www.letsencrypt.org)"
 -->
-
-<!-- LINKS -->
-
-[sniffer]:   https://pypi.python.org/pypi/sniffer
-[droplet]:   https://www.digitalocean.com/products/compute/
-[doctl]:     https://github.com/digitalocean/doctl
-[machine]:   https://docs.docker.com/machine/reference/
-[do-driver]: https://docs.docker.com/machine/drivers/digital-ocean/
