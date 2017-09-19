@@ -67,14 +67,14 @@ app files, and their logging overlaps.
 ### Running Unit Tests (as in CI)
 
 ```bash
-docker run -e ENV=test --rm "hews/autoswatch:$BUILD_VERSION"
+docker run --rm "hews/autoswatch:$BUILD_VERSION" nosetests
 ```
 
 ### Running a Production Server Locally
 
 ```bash
-# Necessary to export $BUILD_VERSION & VIRTUAL_HOST first!
-VIRTUAL_HOST=localhost
+# Necessary to export $BUILD_VERSION & $VIRTUAL_HOST first!
+export VIRTUAL_HOST=localhost
 docker-compose -f docker/compose.production.yml up
 ```
 

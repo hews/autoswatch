@@ -26,4 +26,4 @@ USER flask
 EXPOSE 5000 5001
 ENV TERM=xterm
 
-CMD ["./cmd.sh"]
+ENTRYPOINT ["./entrypoint.sh"]

@@ -9,7 +9,7 @@ CYN="\033[0;36m"
 END="\033[0m"
 
 docker_print() {
-  echo -e "${GRY}[docker/cmd.sh]>${END} $@"
+  echo -e "${GRY}[docker/entrypoint.sh]>${END} $@"
 }
 
 if   [ "$ENV" = "production" ]; then
@@ -33,23 +33,15 @@ if   [ "$ENV" = "production" ]; then
              --mount  /=autoswatch:app \
              --manage-script-name      \
              --wsgi-disable-file-wrapper
-
 elif [ "$ENV" = "test" ]; then
   docker_print "Loading application in test environment…"
-  docker_print "Running tests:"
+  exec "$@"
 
-  exec nosetests
-
-elif [ "$ENV" = "test-guard" ]; then
-  docker_print "Loading application in test environment…"
-  docker_print "Running test guard:"
-
-  exec sniffer
+elif [ "$ENV" = "development" ]; then
+  docker_print "Loading application in development environment…"
+  exec "$@"
 
 else
-  docker_print "Loading application in development environment…"
-  docker_print "Starting dev server:"
-
-  exec flask run --host=0.0.0.0
+  docker_print "${RED}Environment (\$ENV) not set, exiting.${END}"
 
 fi

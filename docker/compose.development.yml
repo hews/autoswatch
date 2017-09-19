@@ -1,6 +1,7 @@
 version: '3.1'
 
 services:
+
   server:
     build: ../
     image: "hews/autoswatch:${BUILD_VERSION}"
@@ -11,11 +12,14 @@ services:
       - 5000:5000
     volumes:
       - ../autoswatch:/app/autoswatch:ro
+    command: flask run --host=0.0.0.0
+
   guard:
     build: ../
     image: hews/autoswatch
     environment:
-      - ENV=test-guard
+      - ENV=test
     volumes:
       - ../autoswatch:/app/autoswatch:ro
       - ../tests:/app/tests:ro
+    command: sniffer
